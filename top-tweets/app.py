@@ -26,7 +26,7 @@ def _is_account_valid(input_username, input_password):
     conn.close()
     
     if check_password_hash(pwd[0], input_password):
-      print("ログイン成功")
+      print("照合完了")
       return True
     else:
       return False
@@ -40,17 +40,27 @@ def _is_account_valid(input_username, input_password):
 @app.route('/', methods=['GET','POST']) # /にアクセスすると/loginにリダイレクト
 def mainpage():
   if 'user_id' in session:
-    """
-    conn = conn_f()
-    cursor = conn.cursor(buffered=True)
-    mysql_cmd = 'select username, date_time from users where user_id="{0}";'.format(user_id)
-    cursor.execute(mysql_cmd)
+    user_id = session.get('user_id')
+    print('ユーザid：'+str(user_id))
+    if user_id != 0:
+      conn = conn_f()
+      cursor = conn.cursor(buffered=True)
+      mysql_cmd = 'select username, date_time from users where user_id="{0}";'.format(user_id)
+      cursor.execute(mysql_cmd)
     
-    cursor.close()
-    conn.close()
-    """
-    return render_template('mainpage.html')
+      username_and_datetime = cursor.fetchone()
+        
+      cursor.close()
+      conn.close()
+    
+      print(username_and_datetime[0])
+      print(username_and_datetime[1])
+
+      return render_template('mainpage.html', username=username_and_datetime[0], datetime=username_and_datetime[1])
   return redirect('/login')
+
+  #セッションがない場合はログインページにリダイレクト 
+  return redirect('/login')                           
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -64,12 +74,14 @@ def login():
       cursor.execute(mysql_cmd)
       user_id = cursor.fetchone()
       session['user_id'] = user_id[0]
-
+      
       cursor.close()
       conn.close()
-
+      
+      print('セッションidは：'+str(session.get('user_id')))
       # セッション保持
-      session['user_id'] = cursor.lastrowid
+      # session['user_id'] = cursor.lastrowid
+      # print('セッションidは：'+str(session.get('user_id')))
       return redirect('/')
 
     else:
