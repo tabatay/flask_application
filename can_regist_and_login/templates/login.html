@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ログインフォーム</title>
+</head>
+<body style="text-align: center; ">
+    <h1>ログインフォーム</h1>
+    <form method="POST" action="/login">
+        <p>{{message}}</p>
+        <input type="text" name="username" placeholder="ユーザ名"><br>
+        <input type="password" name="password" placeholder="パスワード"><br>
+        <input type="submit" value="ログイン">
+    </form>
+    <a href="/sign_up">登録ページ</a>
+</body>
+</html>
